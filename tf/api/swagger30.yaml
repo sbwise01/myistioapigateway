@@ -1,0 +1,48 @@
+---
+openapi: "3.0.1"
+info:
+  description: "API for Bookinfo"
+  version: "2020-04-08T15:04:47Z"
+  title: "Bookinfo-API-gateway"
+paths:
+  /productpage:
+    get:
+      summary: "Get product page"
+      description: "Get product page"
+      parameters:
+      - name: "Host"
+        in: "header"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "SUCCESS"
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        uri: "http://${APIBackend}/productpage"
+        #uri: "https://${APIBackend}/productpage"
+        responses:
+          "200":
+            statusCode: "200"
+        requestParameters:
+          integration.request.header.Host: "method.request.header.Host"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${VPCLinkId}"
+        httpMethod: "GET"
+        timeoutInMillis: 29000
+        type: "http_proxy"
+        # tlsConfig and https uri doesn't work
+        #tlsConfig:
+        #  serverNameToVerify: "${DNSName}"
+components:
+  schemas:
+    Empty:
+      type: "object"
+      title: "Empty Schema"
+
+x-amazon-apigateway-binary-media-types:
+- "UTF-8-encoded"

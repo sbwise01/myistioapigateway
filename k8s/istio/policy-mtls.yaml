@@ -1,0 +1,7 @@
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: mtls-policy
+spec:
+  mtls:
+    mode: PERMISSIVE # Change to STRICT when services are migrated
