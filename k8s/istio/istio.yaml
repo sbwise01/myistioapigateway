@@ -4380,7 +4380,10 @@ webhooks:
         resources: ["pods"]
     failurePolicy: Fail
     admissionReviewVersions: ["v1beta1", "v1"]
-    namespaceSelector:
+    #namespaceSelector:
+    #  matchLabels:
+    #    istio-injection: enabled
+    objectSelector:
       matchLabels:
         istio-injection: enabled
 ---
