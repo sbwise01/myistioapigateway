@@ -11,4 +11,4 @@ curl http://a9ab74a5163e94daaacf47dd24e7c72f-9b64cb6a607fd1f1.elb.us-west-2.amaz
 
 # For HTTPs, use domain name in curl request and resolve to one of the NLB's ip addresses
 # dig internal NLB DNS name for IPs to use in resolve below
-curl https://bookinfo.istio.superscalability.com/productpage --resolve 'bookinfo.istio.superscalability.com:443:10.11.1.241'
+curl https://bookinfo.istio.aws.bradandmarsha.com/productpage --resolve 'bookinfo.istio.aws.bradandmarsha.com:443:10.11.1.241'

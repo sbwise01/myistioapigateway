@@ -2,20 +2,20 @@ terraform {
   required_version = "~> 0.12.24"
 
   backend "s3" {
-    bucket = "brad-terraform-state-us-east-1"
+    bucket = "bw-terraform-state-us-east-1"
     key    = "apigateway.tfstate"
     region = "us-east-1"
-    profile = "supportfog"
+    profile = "foghorn-io-brad"
   }
 }
 
 data "terraform_remote_state" "main" {
   backend = "s3"
   config = {
-    bucket = "brad-terraform-state-us-east-1"
+    bucket = "bw-terraform-state-us-east-1"
     key    = "istio.tfstate"
     region = "us-east-1"
-    profile = "supportfog"
+    profile = "foghorn-io-brad"
   }
 }
 
@@ -27,7 +27,7 @@ data "aws_lb" "internalingress" {
 
 provider "aws" {
   region  = "us-west-2"
-  profile = "supportfog"
+  profile = "foghorn-io-brad"
   version = "~> 2.45"
 }
 
@@ -42,7 +42,7 @@ variable "tags" {
 
 variable "backend_lb_name" {
   description = "The backend EKS istio ingress LB the API Gateway VPCLink points to."
-  default = "a9ab74a5163e94daaacf47dd24e7c72f"
+  default = "ac5dd04ebd03c436397b43a04e1bdbe0"
 }
 
 # Can be overriden:
@@ -142,12 +142,12 @@ resource "aws_api_gateway_base_path_mapping" "base_path_mapping" {
   domain_name = aws_api_gateway_domain_name.applicationdomain.domain_name
 }
 
-resource "aws_api_gateway_method_settings" "methodsettings" {
-  rest_api_id = aws_api_gateway_rest_api.restapi.id
-  stage_name  = aws_api_gateway_stage.stage.stage_name
-  method_path = "*/*"
-  settings {
-    metrics_enabled = true
-    logging_level   = "INFO"
-  }
-}
+#resource "aws_api_gateway_method_settings" "methodsettings" {
+#  rest_api_id = aws_api_gateway_rest_api.restapi.id
+#  stage_name  = aws_api_gateway_stage.stage.stage_name
+#  method_path = "*/*"
+#  settings {
+#    metrics_enabled = true
+#    logging_level   = "INFO"
+#  }
+#}

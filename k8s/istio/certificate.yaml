@@ -15,7 +15,7 @@ spec:
     - foghornconsulting
   # The use of the common name field has been deprecated since 2000 and is
   # discouraged from being used.
-  commonName: istio.superscalability.com
+  commonName: istio.aws.bradandmarsha.com
   isCA: false
   privateKey:
     algorithm: RSA
@@ -25,5 +25,5 @@ spec:
     - server auth
   # At least one of a DNS Name, URI, or IP address is required.
   dnsNames:
-  - istio.superscalability.com
-  - bookinfo.istio.superscalability.com
+  - istio.aws.bradandmarsha.com
+  - bookinfo.istio.aws.bradandmarsha.com

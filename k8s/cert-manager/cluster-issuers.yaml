@@ -8,7 +8,7 @@ spec:
     solvers:
     - dns01:
         route53:
-          hostedZoneID: Z051128638K1X8N1UW7EV
+          hostedZoneID: Z0006149139TQM4S5M56A
           region: us-east-1
     email: brad@foghornconsulting.com
     privateKeySecretRef:
