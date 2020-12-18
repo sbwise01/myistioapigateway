@@ -4380,7 +4380,12 @@ webhooks:
         resources: ["pods"]
     failurePolicy: Fail
     admissionReviewVersions: ["v1beta1", "v1"]
-    namespaceSelector:
+    # Note, we can't have both selectors configured, and objectSelector gives us
+    # the ability to turn on auto injection 1 deployment at a time
+    #namespaceSelector:
+    #  matchLabels:
+    #    istio-injection: enabled
+    objectSelector:
       matchLabels:
         istio-injection: enabled
 ---
