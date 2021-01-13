@@ -23,4 +23,5 @@ spec:
   # At least one of a DNS Name, URI, or IP address is required.
   dnsNames:
   - istio.superscalability.com
+  - nlborigin.istio.superscalability.com
   - bookinfo.istio.superscalability.com

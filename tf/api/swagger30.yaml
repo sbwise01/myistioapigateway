@@ -22,8 +22,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/Empty"
       x-amazon-apigateway-integration:
-        uri: "http://${APIBackend}/productpage"
-        #uri: "https://${APIBackend}/productpage"
+        #uri: "http://${APIBackend}/productpage"
+        uri: "https://${OriginName}/productpage"
         responses:
           "200":
             statusCode: "200"
@@ -35,9 +35,8 @@ paths:
         httpMethod: "GET"
         timeoutInMillis: 29000
         type: "http_proxy"
-        # tlsConfig and https uri doesn't work
-        #tlsConfig:
-        #  serverNameToVerify: "${DNSName}"
+        tlsConfig:
+          insecureSkipVerification: true
 components:
   schemas:
     Empty:
