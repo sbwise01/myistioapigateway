@@ -85,10 +85,13 @@ variable "cache_cluster_size" {
 
 resource "aws_route53_record" "origin" {
   name    = "nlborigin"
-  type    = "CNAME"
-  ttl     = "300"
+  type    = "A"
   zone_id = data.terraform_remote_state.main.outputs.zone_id
-  records = [data.aws_lb.internalingress.dns_name]
+  alias {
+    evaluate_target_health = false
+    name                   = data.aws_lb.internalingress.dns_name
+    zone_id                = data.aws_lb.internalingress.zone_id
+  }
 }
 
 resource "aws_route53_record" "api" {

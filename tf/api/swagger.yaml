@@ -35,8 +35,6 @@ paths:
         httpMethod: "GET"
         timeoutInMillis: 29000
         type: "http_proxy"
-        tlsConfig:
-          insecureSkipVerification: true
 definitions:
   Empty:
     type: "object"
