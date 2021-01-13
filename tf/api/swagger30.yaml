@@ -35,9 +35,7 @@ paths:
         httpMethod: "GET"
         timeoutInMillis: 29000
         type: "http_proxy"
-        # tlsConfig and https uri doesn't work
         tlsConfig:
-          #serverNameToVerify: "${OriginName}"
           insecureSkipVerification: true
 components:
   schemas:
