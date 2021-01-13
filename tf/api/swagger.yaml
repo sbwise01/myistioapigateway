@@ -22,8 +22,8 @@ paths:
           schema:
             $ref: "#/definitions/Empty"
       x-amazon-apigateway-integration:
-        uri: "http://${APIBackend}/productpage"
-        #uri: "https://${APIBackend}/productpage"
+        #uri: "http://${APIBackend}/productpage"
+        uri: "https://${OriginName}/productpage"
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
         connectionId: "${VPCLinkId}"
@@ -36,8 +36,8 @@ paths:
         timeoutInMillis: 29000
         type: "http_proxy"
         # tlsConfig and https uri doesn't work
-        #tlsConfig:
-        #  insecureSkipVerification: true
+        tlsConfig:
+          insecureSkipVerification: true
 definitions:
   Empty:
     type: "object"

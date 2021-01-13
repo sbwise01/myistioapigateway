@@ -83,6 +83,14 @@ variable "cache_cluster_size" {
   description = "The size of the cache cluster for the stage, if enabled"
 }
 
+resource "aws_route53_record" "origin" {
+  name    = "nlborigin"
+  type    = "CNAME"
+  ttl     = "300"
+  zone_id = data.terraform_remote_state.main.outputs.zone_id
+  records = [data.aws_lb.internalingress.dns_name]
+}
+
 resource "aws_route53_record" "api" {
   name    = "bookinfo"
   type    = "A"
@@ -113,6 +121,7 @@ resource "aws_api_gateway_rest_api" "restapi" {
   binary_media_types = var.binary_media_types
   body = templatefile("./swagger30.yaml", {
     DNSName            = "bookinfo.${data.terraform_remote_state.main.outputs.domain_name}"
+    OriginName         = "nlborigin.${data.terraform_remote_state.main.outputs.domain_name}"
     APIBackend         = data.aws_lb.internalingress.dns_name,
     VPCLinkId          = aws_api_gateway_vpc_link.internalingress.id
   })
