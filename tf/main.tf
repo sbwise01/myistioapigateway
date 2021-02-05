@@ -14,14 +14,14 @@ data "aws_caller_identity" "current" {}
 provider "aws" {
   region  = "us-west-2"
   profile = "supportfog"
-  version = "~> 2.45"
+  version = "~> 3.27"
 }
 
 provider "aws" {
   alias  = "us-east-1"
   region  = "us-east-1"
   profile = "supportfog"
-  version = "~> 2.45"
+  version = "~> 3.27"
 }
 
 resource "random_string" "suffix" {
@@ -256,17 +256,25 @@ resource "aws_acm_certificate" "cert" {
 }
 
 resource "aws_route53_record" "cert_validation" {
-  name    = aws_acm_certificate.cert.domain_validation_options.0.resource_record_name
-  type    = aws_acm_certificate.cert.domain_validation_options.0.resource_record_type
+  for_each = {
+    for dvo in aws_acm_certificate.cert.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
+    }
+  }
+
+  name    = each.value.name
+  type    = each.value.type
   zone_id = aws_route53_zone.zone.zone_id
-  records = [aws_acm_certificate.cert.domain_validation_options.0.resource_record_value]
+  records = [each.value.record]
   ttl     = 60
 }
 
 resource "aws_acm_certificate_validation" "cert" {
   provider                = aws.us-east-1
   certificate_arn         = aws_acm_certificate.cert.arn
-  validation_record_fqdns = [aws_route53_record.cert_validation.fqdn]
+  validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
 }
 
 output "domain_name" {
