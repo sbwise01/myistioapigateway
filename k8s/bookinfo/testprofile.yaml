@@ -1,0 +1,55 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: testprofile
+  namespace: bookinfo
+  labels:
+    app: testprofile
+    service: testprofile
+spec:
+  ports:
+  - port: 5000
+    name: http
+  selector:
+    app: testprofile
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: bookinfo-testprofile
+  namespace: bookinfo
+  labels:
+    account: testprofile
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: testprofile
+  namespace: bookinfo
+  labels:
+    app: testprofile
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: testprofile
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: testprofile
+        version: v1
+        istio-injection: enabled
+    spec:
+      serviceAccountName: bookinfo-testprofile
+      containers:
+      - name: testprofile
+        env:
+        - name: APP_NAME
+          value: testprofile
+        image: docker.io/sbwise/flaskhelloworld:0.1.5
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+---

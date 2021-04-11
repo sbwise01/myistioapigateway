@@ -5,6 +5,71 @@ info:
   version: "2020-04-08T15:04:47Z"
   title: "Bookinfo-API-gateway"
 paths:
+  /patient/{testId}/survey:
+    get:
+      summary: "Get survey page"
+      description: "Get survey page"
+      parameters:
+      - in: path
+        name: testId
+        required: true
+        schema:
+          type: string
+          description: "Test id for the survey"
+      - name: "Host"
+        in: "header"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "SUCCESS"
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        uri: "https://${OriginName}/patient/{testId}/survey"
+        responses:
+          "200":
+            statusCode: "200"
+        requestParameters:
+          integration.request.path.testId: "method.request.path.testId"
+          integration.request.header.Host: "method.request.header.Host"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${VPCLinkId}"
+        httpMethod: "GET"
+        timeoutInMillis: 29000
+        type: "http_proxy"
+  /testprofile:
+    get:
+      summary: "Get testprofile page"
+      description: "Get testprofile page"
+      parameters:
+      - name: "Host"
+        in: "header"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "SUCCESS"
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        uri: "https://${OriginName}/testprofile"
+        responses:
+          "200":
+            statusCode: "200"
+        requestParameters:
+          integration.request.header.Host: "method.request.header.Host"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${VPCLinkId}"
+        httpMethod: "GET"
+        timeoutInMillis: 29000
+        type: "http_proxy"
   /productpage:
     get:
       summary: "Get product page"

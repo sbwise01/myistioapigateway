@@ -37,8 +37,21 @@ spec:
   http:
   - match:
     - uri:
-        prefix: /
+        regex: /patient/.*/survey
     route:
+    - destination:
+        host: survey
+        port:
+          number: 5000
+  - match:
+    - uri:
+        prefix: /testprofile
+    route:
+    - destination:
+        host: testprofile
+        port:
+          number: 5000
+  - route:
     - destination:
         host: productpage
         port:
