@@ -45,6 +45,14 @@ spec:
           number: 5000
   - match:
     - uri:
+        prefix: /patient
+    route:
+    - destination:
+        host: patient
+        port:
+          number: 5000
+  - match:
+    - uri:
         prefix: /testprofile
     route:
     - destination:

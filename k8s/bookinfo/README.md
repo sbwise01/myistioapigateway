@@ -3,4 +3,5 @@ Deployment order
 2.  bookinfo.yaml
 3.  testprofile.yaml
 4.  survey.yaml
-5.  bookinfo-gateway.yaml (Option swap which ingress to use from internal to internet facing)
+5.  patient.yaml
+6.  bookinfo-gateway.yaml (Option swap which ingress to use from internal to internet facing)
