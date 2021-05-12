@@ -57,8 +57,16 @@ spec:
     route:
     - destination:
         host: testprofile
+        subset: v1
         port:
           number: 5000
+      weight: 50
+    - destination:
+        host: testprofile
+        subset: v2
+        port:
+          number: 5000
+      weight: 50
   - route:
     - destination:
         host: productpage

@@ -21,6 +21,21 @@ metadata:
   labels:
     account: testprofile
 ---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: testprofile
+  namespace: bookinfo
+spec:
+  host: testprofile
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+  - name: v2
+    labels:
+      version: v2
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -48,6 +63,38 @@ spec:
         env:
         - name: APP_NAME
           value: testprofile
+        image: docker.io/sbwise/flaskhelloworld:0.1.5
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: testprofile-v2
+  namespace: bookinfo
+  labels:
+    app: testprofile
+    version: v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: testprofile
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: testprofile
+        version: v2
+        istio-injection: enabled
+    spec:
+      serviceAccountName: bookinfo-testprofile
+      containers:
+      - name: testprofile
+        env:
+        - name: APP_NAME
+          value: testprofilev2
         image: docker.io/sbwise/flaskhelloworld:0.1.5
         imagePullPolicy: IfNotPresent
         ports:
