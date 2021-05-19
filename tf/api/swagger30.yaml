@@ -35,6 +35,7 @@ paths:
         requestParameters:
           integration.request.path.testId: "method.request.path.testId"
           integration.request.header.Host: "method.request.header.Host"
+          integration.request.header.MyIstioHost: "method.request.header.Host"
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
         connectionId: "${VPCLinkId}"
@@ -64,6 +65,7 @@ paths:
             statusCode: "200"
         requestParameters:
           integration.request.header.Host: "method.request.header.Host"
+          integration.request.header.MyIstioHost: "method.request.header.Host"
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
         connectionId: "${VPCLinkId}"
@@ -93,6 +95,7 @@ paths:
             statusCode: "200"
         requestParameters:
           integration.request.header.Host: "method.request.header.Host"
+          integration.request.header.MyIstioHost: "method.request.header.Host"
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
         connectionId: "${VPCLinkId}"
@@ -123,6 +126,7 @@ paths:
             statusCode: "200"
         requestParameters:
           integration.request.header.Host: "method.request.header.Host"
+          integration.request.header.MyIstioHost: "method.request.header.Host"
         passthroughBehavior: "when_no_match"
         connectionType: "VPC_LINK"
         connectionId: "${VPCLinkId}"

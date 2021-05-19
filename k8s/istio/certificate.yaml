@@ -25,4 +25,4 @@ spec:
   - istio.aws.bradandmarsha.com
   - nlborigin.istio.aws.bradandmarsha.com
   - bookinfo.istio.aws.bradandmarsha.com
-  - bookinfo2.istio.aws.bradandmarsha.com
+  - bookinfo-test.istio.aws.bradandmarsha.com

@@ -4,4 +4,5 @@ Deployment order
 3.  istio.yaml
 4.  envoyfilters.yaml
 5.  policy-mtls.yaml
-6.  internal-ingress.yaml
+6.  external-ingress.yaml
+7.  internal-ingress.yaml

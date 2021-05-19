@@ -105,9 +105,27 @@ resource "aws_route53_record" "api" {
   }
 }
 
+resource "aws_route53_record" "api-test" {
+  name    = "bookinfo-test"
+  type    = "A"
+  zone_id = data.terraform_remote_state.main.outputs.zone_id
+  alias {
+    evaluate_target_health = false
+    name                   = aws_api_gateway_domain_name.applicationtestdomain.cloudfront_domain_name
+    zone_id                = aws_api_gateway_domain_name.applicationtestdomain.cloudfront_zone_id
+  }
+}
+
 resource "aws_api_gateway_domain_name" "applicationdomain" {
   certificate_arn = data.terraform_remote_state.main.outputs.acm_cert_arn
   domain_name     = "bookinfo.${data.terraform_remote_state.main.outputs.domain_name}"
+  security_policy = "TLS_1_2"
+  tags            = var.tags
+}
+
+resource "aws_api_gateway_domain_name" "applicationtestdomain" {
+  certificate_arn = data.terraform_remote_state.main.outputs.acm_cert_arn
+  domain_name     = "bookinfo-test.${data.terraform_remote_state.main.outputs.domain_name}"
   security_policy = "TLS_1_2"
   tags            = var.tags
 }
@@ -123,7 +141,6 @@ resource "aws_api_gateway_rest_api" "restapi" {
   api_key_source     = var.api_key_source
   binary_media_types = var.binary_media_types
   body = templatefile("./swagger30.yaml", {
-    DNSName            = "bookinfo.${data.terraform_remote_state.main.outputs.domain_name}"
     OriginName         = "nlborigin.${data.terraform_remote_state.main.outputs.domain_name}"
     APIBackend         = data.aws_lb.internalingress.dns_name,
     VPCLinkId          = aws_api_gateway_vpc_link.internalingress.id
@@ -152,6 +169,12 @@ resource "aws_api_gateway_base_path_mapping" "base_path_mapping" {
   api_id      = aws_api_gateway_rest_api.restapi.id
   stage_name  = aws_api_gateway_stage.stage.stage_name
   domain_name = aws_api_gateway_domain_name.applicationdomain.domain_name
+}
+
+resource "aws_api_gateway_base_path_mapping" "base_path_mapping_test" {
+  api_id      = aws_api_gateway_rest_api.restapi.id
+  stage_name  = aws_api_gateway_stage.stage.stage_name
+  domain_name = aws_api_gateway_domain_name.applicationtestdomain.domain_name
 }
 
 #resource "aws_api_gateway_method_settings" "methodsettings" {

@@ -1,0 +1,55 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: patient
+  namespace: bookinfo-blue
+  labels:
+    app: patient
+    service: patient
+spec:
+  ports:
+  - port: 5000
+    name: http
+  selector:
+    app: patient
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: bookinfo-patient
+  namespace: bookinfo-blue
+  labels:
+    account: patient
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: patient
+  namespace: bookinfo-blue
+  labels:
+    app: patient
+    version: blue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: patient
+      version: blue
+  template:
+    metadata:
+      labels:
+        app: patient
+        version: blue
+        istio-injection: enabled
+    spec:
+      serviceAccountName: bookinfo-patient
+      containers:
+      - name: patient
+        env:
+        - name: APP_NAME
+          value: patient
+        image: docker.io/sbwise/flaskhelloworld:0.1.5
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+---
