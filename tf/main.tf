@@ -236,6 +236,20 @@ resource "aws_route53_zone" "zone" {
   name              = "${var.cluster_name}.aws.bradandmarsha.com"
 }
 
+resource "kubernetes_config_map" "zone-ids" {
+  provider = kubernetes.eks
+
+  metadata {
+    name      = "zone-ids"
+    namespace = "default"
+  }
+
+  data = {
+    parent_zone_id = aws_route53_zone.parent_zone.id
+    main_zone_id   = aws_route53_zone.zone.id
+  }
+}
+
 resource "aws_route53_record" "delegation" {
   allow_overwrite = true
   name            = var.cluster_name
@@ -265,11 +279,12 @@ resource "aws_route53_record" "cert_validation" {
     }
   }
 
-  name    = each.value.name
-  type    = each.value.type
-  zone_id = aws_route53_zone.zone.zone_id
-  records = [each.value.record]
-  ttl     = 60
+  name            = each.value.name
+  type            = each.value.type
+  zone_id         = aws_route53_zone.zone.zone_id
+  records         = [each.value.record]
+  ttl             = 60
+  allow_overwrite = true
 }
 
 resource "aws_acm_certificate_validation" "cert" {

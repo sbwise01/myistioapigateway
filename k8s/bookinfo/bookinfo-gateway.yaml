@@ -31,16 +31,13 @@ metadata:
   namespace: istio-system
 spec:
   hosts:
-  - "*.istio.aws.bradandmarsha.com"
+  - "nlborigin-blue.istio.aws.bradandmarsha.com"
   gateways:
   - bookinfo-gateway
   http:
   - match:
     - uri:
         regex: /patient/.*/survey
-      headers:
-        MyIstioHost:
-          exact: bookinfo.istio.aws.bradandmarsha.com
     route:
     - destination:
         host: survey.bookinfo-blue.svc.cluster.local
@@ -49,9 +46,6 @@ spec:
   - match:
     - uri:
         prefix: /patient
-      headers:
-        MyIstioHost:
-          exact: bookinfo.istio.aws.bradandmarsha.com
     route:
     - destination:
         host: patient.bookinfo-blue.svc.cluster.local
@@ -60,19 +54,12 @@ spec:
   - match:
     - uri:
         prefix: /testprofile
-      headers:
-        MyIstioHost:
-          exact: bookinfo.istio.aws.bradandmarsha.com
     route:
     - destination:
         host: testprofile.bookinfo-blue.svc.cluster.local
         port:
           number: 5000
-  - match:
-    - headers:
-        MyIstioHost:
-          exact: bookinfo.istio.aws.bradandmarsha.com
-    route:
+  - route:
     - destination:
         host: productpage.bookinfo-blue.svc.cluster.local
         port:
@@ -85,16 +72,13 @@ metadata:
   namespace: istio-system
 spec:
   hosts:
-  - "*.istio.aws.bradandmarsha.com"
+  - "nlborigin-green.istio.aws.bradandmarsha.com"
   gateways:
   - bookinfo-gateway
   http:
   - match:
     - uri:
         regex: /patient/.*/survey
-      headers:
-        MyIstioHost:
-          exact: bookinfo-test.istio.aws.bradandmarsha.com
     route:
     - destination:
         host: survey.bookinfo-green.svc.cluster.local
@@ -103,9 +87,6 @@ spec:
   - match:
     - uri:
         prefix: /patient
-      headers:
-        MyIstioHost:
-          exact: bookinfo-test.istio.aws.bradandmarsha.com
     route:
     - destination:
         host: patient.bookinfo-green.svc.cluster.local
@@ -114,19 +95,12 @@ spec:
   - match:
     - uri:
         prefix: /testprofile
-      headers:
-        MyIstioHost:
-          exact: bookinfo-test.istio.aws.bradandmarsha.com
     route:
     - destination:
         host: testprofile.bookinfo-green.svc.cluster.local
         port:
           number: 5000
-  - match:
-    - headers:
-        MyIstioHost:
-          exact: bookinfo-test.istio.aws.bradandmarsha.com
-    route:
+  - route:
     - destination:
         host: productpage.bookinfo-green.svc.cluster.local
         port:

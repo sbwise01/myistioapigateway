@@ -23,6 +23,7 @@ spec:
   # At least one of a DNS Name, URI, or IP address is required.
   dnsNames:
   - istio.aws.bradandmarsha.com
-  - nlborigin.istio.aws.bradandmarsha.com
+  - nlborigin-blue.istio.aws.bradandmarsha.com
+  - nlborigin-green.istio.aws.bradandmarsha.com
   - bookinfo.istio.aws.bradandmarsha.com
   - bookinfo-test.istio.aws.bradandmarsha.com

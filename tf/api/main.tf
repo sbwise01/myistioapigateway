@@ -83,8 +83,19 @@ variable "cache_cluster_size" {
   description = "The size of the cache cluster for the stage, if enabled"
 }
 
-resource "aws_route53_record" "origin" {
-  name    = "nlborigin"
+resource "aws_route53_record" "origin-blue" {
+  name    = "nlborigin-blue"
+  type    = "A"
+  zone_id = data.terraform_remote_state.main.outputs.zone_id
+  alias {
+    evaluate_target_health = false
+    name                   = data.aws_lb.internalingress.dns_name
+    zone_id                = data.aws_lb.internalingress.zone_id
+  }
+}
+
+resource "aws_route53_record" "origin-green" {
+  name    = "nlborigin-green"
   type    = "A"
   zone_id = data.terraform_remote_state.main.outputs.zone_id
   alias {
@@ -141,7 +152,7 @@ resource "aws_api_gateway_rest_api" "restapi" {
   api_key_source     = var.api_key_source
   binary_media_types = var.binary_media_types
   body = templatefile("./swagger30.yaml", {
-    OriginName         = "nlborigin.${data.terraform_remote_state.main.outputs.domain_name}"
+    OriginName         = aws_route53_record.origin-blue.fqdn
     APIBackend         = data.aws_lb.internalingress.dns_name,
     VPCLinkId          = aws_api_gateway_vpc_link.internalingress.id
   })
@@ -152,14 +163,27 @@ resource "aws_api_gateway_rest_api" "restapi" {
   tags                     = var.tags
 }
 
-resource "aws_api_gateway_deployment" "deployment" {
+resource "aws_api_gateway_deployment" "deployment-blue" {
   rest_api_id = aws_api_gateway_rest_api.restapi.id
 }
 
-resource "aws_api_gateway_stage" "stage" {
-  stage_name    = "bookinfo"
+resource "aws_api_gateway_stage" "stage-blue" {
+  stage_name    = "blue"
   rest_api_id   = aws_api_gateway_rest_api.restapi.id
-  deployment_id = aws_api_gateway_deployment.deployment.id
+  deployment_id = aws_api_gateway_deployment.deployment-blue.id
+
+  cache_cluster_enabled = var.cache_cluster_enabled
+  cache_cluster_size    = var.cache_cluster_size
+}
+
+resource "aws_api_gateway_deployment" "deployment-green" {
+  rest_api_id = aws_api_gateway_rest_api.restapi.id
+}
+
+resource "aws_api_gateway_stage" "stage-green" {
+  stage_name    = "green"
+  rest_api_id   = aws_api_gateway_rest_api.restapi.id
+  deployment_id = aws_api_gateway_deployment.deployment-green.id
 
   cache_cluster_enabled = var.cache_cluster_enabled
   cache_cluster_size    = var.cache_cluster_size
@@ -167,13 +191,13 @@ resource "aws_api_gateway_stage" "stage" {
 
 resource "aws_api_gateway_base_path_mapping" "base_path_mapping" {
   api_id      = aws_api_gateway_rest_api.restapi.id
-  stage_name  = aws_api_gateway_stage.stage.stage_name
+  stage_name  = aws_api_gateway_stage.stage-blue.stage_name
   domain_name = aws_api_gateway_domain_name.applicationdomain.domain_name
 }
 
 resource "aws_api_gateway_base_path_mapping" "base_path_mapping_test" {
   api_id      = aws_api_gateway_rest_api.restapi.id
-  stage_name  = aws_api_gateway_stage.stage.stage_name
+  stage_name  = aws_api_gateway_stage.stage-green.stage_name
   domain_name = aws_api_gateway_domain_name.applicationtestdomain.domain_name
 }
 
