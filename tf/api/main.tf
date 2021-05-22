@@ -156,7 +156,7 @@ resource "aws_api_gateway_rest_api" "restapi" {
     APIBackend         = data.aws_lb.internalingress.dns_name,
     VPCLinkId          = aws_api_gateway_vpc_link.internalingress.id
   })
-  description              = "Bookinfo Api GW"
+  description              = "API for Bookinfo"
   minimum_compression_size = var.minimum_compression_size
   name                     = "Bookinfo-API-gateway"
   policy                   = var.gateway_policy
