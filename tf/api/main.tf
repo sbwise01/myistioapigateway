@@ -21,8 +21,17 @@ data "terraform_remote_state" "main" {
 
 data "aws_caller_identity" "current" {}
 
+data "kubernetes_service" "ingress_lb" {
+  provider = kubernetes.eks
+
+  metadata {
+    name      = "istio-internal-ingressgateway"
+    namespace = "istio-system"
+  }
+}
+
 data "aws_lb" "internalingress" {
-  name = var.backend_lb_name
+  name = regex("^[^-]+", data.kubernetes_service.ingress_lb.load_balancer_ingress.0.hostname)
 }
 
 provider "aws" {
@@ -38,11 +47,6 @@ variable "tags" {
   default = {
     CostCenter = "brad@foghornconsulting.com"
   }
-}
-
-variable "backend_lb_name" {
-  description = "The backend EKS istio ingress LB the API Gateway VPCLink points to."
-  default = "ac5dd04ebd03c436397b43a04e1bdbe0"
 }
 
 # Can be overriden:
@@ -81,6 +85,23 @@ variable "cache_cluster_size" {
   type        = string
   default     = "0.5"
   description = "The size of the cache cluster for the stage, if enabled"
+}
+
+data "aws_eks_cluster" "eks" {
+  name = data.terraform_remote_state.main.outputs.eks_cluster_id
+}
+
+data "aws_eks_cluster_auth" "eks" {
+  name = data.terraform_remote_state.main.outputs.eks_cluster_id
+}
+
+provider "kubernetes" {
+  alias                  = "eks"
+  host                   = data.aws_eks_cluster.eks.endpoint
+  cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority.0.data)
+  token                  = data.aws_eks_cluster_auth.eks.token
+  load_config_file       = false
+  version                = "1.11.1"
 }
 
 resource "aws_route53_record" "origin-blue" {
