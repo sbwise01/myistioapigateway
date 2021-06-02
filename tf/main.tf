@@ -102,7 +102,7 @@ module "eks" {
   cluster_name    = local.cluster_name
   subnets         = module.vpc.private_subnets
   vpc_id          = module.vpc.vpc_id
-  cluster_version = "1.15"
+  cluster_version = "1.16"
   map_roles       = [
     {
       rolearn = aws_iam_role.istio.arn
@@ -303,4 +303,8 @@ output "acm_cert_arn" {
 
 output "zone_id" {
   value = aws_route53_zone.zone.id
+}
+
+output "eks_cluster_id" {
+  value = module.eks.cluster_id
 }
