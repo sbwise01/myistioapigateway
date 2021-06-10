@@ -1,4 +1,4 @@
 Deployment order
-1.  blue
-2.  green
-3.  bookinfo-gateway.yaml
+1.  bookinfo-gateway.yaml
+2.  blue
+3.  green

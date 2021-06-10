@@ -4,3 +4,4 @@ Deployment order
 3.  testprofile.yaml
 4.  survey.yaml
 5.  patient.yaml
+6.  virtualservice.yaml
