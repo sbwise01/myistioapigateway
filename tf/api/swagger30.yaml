@@ -72,6 +72,36 @@ paths:
         httpMethod: "GET"
         timeoutInMillis: 29000
         type: "http_proxy"
+  /fake:
+    get:
+      summary: "Get patient page"
+      description: "Get patient page"
+      parameters:
+      - name: "Host"
+        in: "header"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "SUCCESS"
+          content:
+            text/html:
+              schema:
+                $ref: "#/components/schemas/Empty"
+      x-amazon-apigateway-integration:
+        uri: "https://${OriginName}/fake"
+        responses:
+          "200":
+            statusCode: "200"
+        requestParameters:
+          integration.request.header.Host: "method.request.header.Host"
+          integration.request.header.MyIstioHost: "method.request.header.Host"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${VPCLinkId}"
+        httpMethod: "GET"
+        timeoutInMillis: 29000
+        type: "http_proxy"
   /testprofile:
     get:
       summary: "Get testprofile page"

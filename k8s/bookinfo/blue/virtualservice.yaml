@@ -34,6 +34,18 @@ spec:
         host: testprofile
         port:
           number: 5000
+  - match:
+    - uri:
+        prefix: /fake/
+    - uri:
+        prefix: /fake
+    rewrite:
+      uri: /patient
+    route:
+    - destination:
+        host: patient
+        port:
+          number: 5000
   - route:
     - destination:
         host: productpage
