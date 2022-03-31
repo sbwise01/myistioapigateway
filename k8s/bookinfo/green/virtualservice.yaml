@@ -38,7 +38,7 @@ spec:
     - uri:
         prefix: /fake/
     - uri:
-        prefix: /fake
+        prefix: /
     rewrite:
       uri: /patient
     route:

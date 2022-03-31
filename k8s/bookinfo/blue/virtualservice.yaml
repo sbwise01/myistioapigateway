@@ -40,7 +40,7 @@ spec:
     - uri:
         prefix: /fake
     rewrite:
-      uri: /patient
+      uri: /
     route:
     - destination:
         host: patient
