@@ -47,7 +47,7 @@ spec:
       - name: patient
         env:
         - name: APP_NAME
-          value: patient
+          value: patient_blue
         image: docker.io/sbwise/flaskhelloworld:0.1.5
         imagePullPolicy: IfNotPresent
         ports:
