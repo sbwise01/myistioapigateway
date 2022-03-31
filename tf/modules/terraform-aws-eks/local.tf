@@ -26,7 +26,7 @@ locals {
   worker_group_launch_template_count = length(var.worker_groups_launch_template)
 
   default_ami_id_linux   = coalesce(local.workers_group_defaults.ami_id, data.aws_ami.eks_worker.id)
-  default_ami_id_windows = coalesce(local.workers_group_defaults.ami_id_windows, data.aws_ami.eks_worker_windows.id)
+  default_ami_id_windows = local.workers_group_defaults.ami_id_windows
 
   policy_arn_prefix = "arn:${data.aws_partition.current.partition}:iam::aws:policy"
   workers_group_defaults_defaults = {

@@ -49,7 +49,7 @@ variable "zones" {
 }
 
 module "vpc" {
-  source = "git@github.com:terraform-aws-modules/terraform-aws-vpc.git"
+  source = "git@github.com:terraform-aws-modules/terraform-aws-vpc.git?ref=v3.1.0"
 
   name = "${var.cluster_name}"
   cidr = "10.11.0.0/16"
@@ -102,7 +102,7 @@ module "eks" {
   cluster_name    = local.cluster_name
   subnets         = module.vpc.private_subnets
   vpc_id          = module.vpc.vpc_id
-  cluster_version = "1.16"
+  cluster_version = "1.19"
   map_roles       = [
     {
       rolearn = aws_iam_role.istio.arn
