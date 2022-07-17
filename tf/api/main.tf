@@ -9,6 +9,10 @@ terraform {
   }
 }
 
+locals {
+  buckets_prefix     = "brad"
+}
+
 data "terraform_remote_state" "main" {
   backend = "s3"
   config = {
@@ -60,7 +64,7 @@ variable "api_key_source" {
 
 variable "binary_media_types" {
   type        = list
-  default     = ["UTF-8-encoded"]
+  default     = ["UTF-8-encoded", "image/*"]
   description = "The list of binary media types supported by the RestApi. By default, the RestApi supports only UTF-8-encoded text payloads."
 }
 
@@ -176,6 +180,9 @@ resource "aws_api_gateway_rest_api" "restapi" {
     OriginName         = aws_route53_record.origin-blue.fqdn
     APIBackend         = data.aws_lb.internalingress.dns_name,
     VPCLinkId          = aws_api_gateway_vpc_link.internalingress.id
+    WebBucketName      = aws_s3_bucket.web-bucket.id
+    Region             = "us-west-2"
+    S3RoleArn          = aws_iam_role.api-gw-s3-role.arn
   })
   description              = "API for Bookinfo"
   minimum_compression_size = var.minimum_compression_size
@@ -231,3 +238,54 @@ resource "aws_api_gateway_base_path_mapping" "base_path_mapping_test" {
 #    logging_level   = "INFO"
 #  }
 #}
+
+resource "aws_s3_bucket" "web-bucket" {
+  bucket        = "${local.buckets_prefix}-web-bucket"
+  acl           = "private"
+  force_destroy = true
+  website {
+    error_document = "error.html"
+    index_document = "index.html"
+  }
+}
+
+resource "aws_s3_bucket_object" "default-index-page" {
+  bucket        = aws_s3_bucket.web-bucket.id
+  acl           = "private"
+  force_destroy = true
+  key           = "index.html"
+  content       = templatefile("files/web/index.html", {})
+  content_type  = "text/html"
+}
+
+resource "aws_s3_bucket_object" "default-image" {
+  bucket        = aws_s3_bucket.web-bucket.id
+  acl           = "private"
+  force_destroy = true
+  key           = "images/image.jpg"
+  source        = "files/web/images/image.jpg"
+  content_type  = "image/jpeg"
+
+  etag = filemd5("files/web/images/image.jpg")
+}
+
+data "aws_iam_policy_document" "trust_policy" {
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "Service"
+      identifiers = ["apigateway.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "api-gw-s3-role" {
+  name               = "${local.buckets_prefix}-web-bucket-role"
+  assume_role_policy = data.aws_iam_policy_document.trust_policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "api-gw-s3-policy" {
+  role       = aws_iam_role.api-gw-s3-role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+}
