@@ -1,5 +1,16 @@
 terraform {
-  required_version = "~> 0.12.31"
+  required_version = ">= 1.0"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 4.47"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "2.16"
+    }
+  }
 
   backend "s3" {
     bucket = "bw-terraform-state-us-east-1"
@@ -29,19 +40,18 @@ data "kubernetes_service" "ingress_lb" {
   provider = kubernetes.eks
 
   metadata {
-    name      = "istio-internal-ingressgateway"
+    name      = "istio-ingressgateway"
     namespace = "istio-system"
   }
 }
 
 data "aws_lb" "internalingress" {
-  name = regex("^[^-]+", data.kubernetes_service.ingress_lb.load_balancer_ingress.0.hostname)
+  name = regex("^[^-]+", data.kubernetes_service.ingress_lb.status[0].load_balancer[0].ingress[0].hostname)
 }
 
 provider "aws" {
   region  = "us-west-2"
   profile = "foghorn-io-brad"
-  version = "~> 2.45"
 }
 
 # Mandatory:
@@ -92,20 +102,18 @@ variable "cache_cluster_size" {
 }
 
 data "aws_eks_cluster" "eks" {
-  name = data.terraform_remote_state.main.outputs.eks_cluster_id
+  name = data.terraform_remote_state.main.outputs.eks_cluster_name
 }
 
 data "aws_eks_cluster_auth" "eks" {
-  name = data.terraform_remote_state.main.outputs.eks_cluster_id
+  name = data.terraform_remote_state.main.outputs.eks_cluster_name
 }
 
 provider "kubernetes" {
   alias                  = "eks"
   host                   = data.aws_eks_cluster.eks.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority.0.data)
+  cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)
   token                  = data.aws_eks_cluster_auth.eks.token
-  load_config_file       = false
-  version                = "1.11.1"
 }
 
 resource "aws_route53_record" "origin-blue" {

@@ -6,15 +6,8 @@ metadata:
   namespace: istio-system
 spec:
   selector:
-    istio: internal-ingressgateway # use added internal controller
-    #istio: ingressgateway # use istio default controller
+    istio: ingressgateway
   servers:
-  #- port:
-  #    number: 80
-  #    name: http
-  #    protocol: HTTP
-  #  hosts:
-  #  - "*"
   - port:
       number: 443
       name: https
@@ -23,4 +16,4 @@ spec:
     - "*.istio.aws.bradandmarsha.com"
     tls:
       mode: SIMPLE # enables HTTPS on this port
-      credentialName: internal-ingressgateway-certs
+      credentialName: istio-ingressgateway-certs
