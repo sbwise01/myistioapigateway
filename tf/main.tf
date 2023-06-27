@@ -68,7 +68,7 @@ variable "zones" {
 }
 
 module "vpc" {
-  source = "git@github.com:terraform-aws-modules/terraform-aws-vpc.git?ref=v3.1.0"
+  source = "git@github.com:terraform-aws-modules/terraform-aws-vpc.git?ref=v4.0.2"
 
   name = "${var.cluster_name}"
   cidr = "10.11.0.0/16"
@@ -494,7 +494,7 @@ resource "kubernetes_service_account" "service_accounts" {
 
 resource "aws_route53_zone" "parent_zone" {
   name              = "aws.bradandmarsha.com"
-  delegation_set_id = "N03386422VXZJKGR4YO18"
+  delegation_set_id = "N01336602XUIEH4QJIV0F"
 }
 
 resource "aws_route53_zone" "zone" {
