@@ -13,10 +13,9 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "bw-terraform-state-us-east-1"
+    bucket = "brad-tf-state"
     key    = "apigateway.tfstate"
-    region = "us-east-1"
-    profile = "foghorn-io-brad"
+    region = "us-east-2"
   }
 }
 
@@ -27,10 +26,9 @@ locals {
 data "terraform_remote_state" "main" {
   backend = "s3"
   config = {
-    bucket = "bw-terraform-state-us-east-1"
+    bucket = "brad-tf-state"
     key    = "istio.tfstate"
-    region = "us-east-1"
-    profile = "foghorn-io-brad"
+    region = "us-east-2"
   }
 }
 
@@ -50,8 +48,7 @@ data "aws_lb" "internalingress" {
 }
 
 provider "aws" {
-  region  = "us-west-2"
-  profile = "foghorn-io-brad"
+  region  = "us-east-2"
 }
 
 # Mandatory:
@@ -187,7 +184,7 @@ module "api_gateway_bookinfo" {
     OriginName         = "nlborigin-blue.${data.terraform_remote_state.main.outputs.domain_name}"
     VPCLinkId          = aws_api_gateway_vpc_link.internalingress.id
     WebBucketName      = aws_s3_bucket.web-bucket.id
-    Region             = "us-west-2"
+    Region             = "us-east-2"
     S3RoleArn          = aws_iam_role.api-gw-s3-role.arn
   })
   route53_zone_id       = data.terraform_remote_state.main.outputs.zone_id
@@ -208,7 +205,7 @@ module "api_gateway_bookinfo_test" {
     OriginName         = "nlborigin-green.${data.terraform_remote_state.main.outputs.domain_name}"
     VPCLinkId          = aws_api_gateway_vpc_link.internalingress.id
     WebBucketName      = aws_s3_bucket.web-bucket.id
-    Region             = "us-west-2"
+    Region             = "us-east-2"
     S3RoleArn          = aws_iam_role.api-gw-s3-role.arn
   })
   route53_zone_id       = data.terraform_remote_state.main.outputs.zone_id

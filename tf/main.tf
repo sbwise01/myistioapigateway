@@ -13,24 +13,21 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "bw-terraform-state-us-east-1"
+    bucket = "brad-tf-state"
     key    = "istio.tfstate"
-    region = "us-east-1"
-    profile = "foghorn-io-brad"
+    region = "us-east-2"
   }
 }
 
 data "aws_caller_identity" "current" {}
 
 provider "aws" {
-  region  = "us-west-2"
-  profile = "foghorn-io-brad"
+  region  = "us-east-2"
 }
 
 provider "aws" {
   alias  = "us-east-1"
   region  = "us-east-1"
-  profile = "foghorn-io-brad"
 }
 
 resource "random_string" "suffix" {
@@ -64,7 +61,7 @@ locals {
 }
 
 variable "zones" {
-  default = ["us-west-2a", "us-west-2b", "us-west-2c"]
+  default = ["us-east-2a", "us-east-2b", "us-east-2c"]
 }
 
 module "vpc" {
@@ -494,7 +491,7 @@ resource "kubernetes_service_account" "service_accounts" {
 
 resource "aws_route53_zone" "parent_zone" {
   name              = "aws.bradandmarsha.com"
-  delegation_set_id = "N01336602XUIEH4QJIV0F"
+  delegation_set_id = "N01520513SWFAR055EX7G"
 }
 
 resource "aws_route53_zone" "zone" {
