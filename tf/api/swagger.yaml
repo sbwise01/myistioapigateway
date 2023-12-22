@@ -1,0 +1,43 @@
+---
+swagger: "2.0"
+info:
+  description: "API for Bookinfo"
+  version: "2020-04-08T15:04:47Z"
+  title: "Bookinfo-API-gateway"
+schemes:
+- "https"
+paths:
+  /productpage:
+    get:
+      produces:
+      - "text/html"
+      parameters:
+      - name: "Host"
+        in: "header"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+      x-amazon-apigateway-integration:
+        #uri: "http://${APIBackend}/productpage"
+        uri: "https://${OriginName}/productpage"
+        passthroughBehavior: "when_no_match"
+        connectionType: "VPC_LINK"
+        connectionId: "${VPCLinkId}"
+        responses:
+          default:
+            statusCode: "200"
+        requestParameters:
+          integration.request.header.Host: "method.request.header.Host"
+        httpMethod: "GET"
+        timeoutInMillis: 29000
+        type: "http_proxy"
+definitions:
+  Empty:
+    type: "object"
+    title: "Empty Schema"
+x-amazon-apigateway-binary-media-types:
+- "UTF-8-encoded"

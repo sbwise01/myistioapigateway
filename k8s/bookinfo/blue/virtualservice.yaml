@@ -1,0 +1,53 @@
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: bookinfo
+  namespace: bookinfo-blue
+spec:
+  hosts:
+  - "nlborigin-blue.istio.aws.bradandmarsha.com"
+  gateways:
+  - istio-system/bookinfo-gateway
+  http:
+  - match:
+    - uri:
+        regex: /patient/.*/survey
+    route:
+    - destination:
+        host: survey
+        port:
+          number: 5000
+  - match:
+    - uri:
+        prefix: /patient
+    route:
+    - destination:
+        host: patient
+        port:
+          number: 5000
+  - match:
+    - uri:
+        prefix: /testprofile
+    route:
+    - destination:
+        host: testprofile
+        port:
+          number: 5000
+  - match:
+    - uri:
+        prefix: /fake/
+    - uri:
+        prefix: /fake
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: patient
+        port:
+          number: 5000
+  - route:
+    - destination:
+        host: productpage
+        port:
+          number: 9080
